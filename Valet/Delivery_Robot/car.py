@@ -23,20 +23,21 @@ class CAR:
         self.surf.set_colorkey(WHITE)
         self.surf.fill(RED)
 
+    def change_state(self,x,y,angle):
+        self.x = x
+        self.y = y
+        self.angle = angle
 
-    def next_state(self,vel_l,vel_r):
+
+    def next_state(self,vel_l,vel_r,curr_state):
         delta_x = self.r*(vel_r + vel_l)*cos(self.angle)/2
         delta_y = self.r*(vel_r + vel_l)*sin(self.angle)/2
         delta_angle = self.r*(vel_r-vel_l)/self.L
-
-        self.x = self.x + delta_x
-        self.y = self.y + delta_y
-        self.pos = (self.x,self.y)
-        self.angle = self.angle +delta_angle
-
-    def reset(self):
-        self.centerx = self.height//2
-        self.centery = 0
+        x,y,angle = curr_state
+        x = self.x + delta_x
+        y = self.y + delta_y
+        angle = self.angle +delta_angle
+        return (x,y,angle)
     
     def draw(self,win):
     
