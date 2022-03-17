@@ -4,10 +4,11 @@ from math import *
 
 RED = (255,0,0)
 WHITE = (255,255,255)
+BLUE = (0,0,255)
 
 
 class CAR:
-    def __init__(self,max_x = 600,max_y = 400,pos =(0,0),angle = 0,r = 1/2*pi,L = 20,height = 20,width = 20) -> None:
+    def __init__(self,max_x = 600,max_y = 400,pos =(0,0),angle = 0,r = 1/(pi*2),L = 20,height = 20,width = 20) -> None:
         self.pos = pos
         self.angle = angle
         self.x = pos[0]
@@ -29,11 +30,10 @@ class CAR:
         self.angle = angle
 
 
-    def next_state(self,vel_l,vel_r,curr_state):
+    def next_state(self,vel_l,vel_r):
         delta_x = self.r*(vel_r + vel_l)*cos(self.angle)/2
         delta_y = self.r*(vel_r + vel_l)*sin(self.angle)/2
         delta_angle = self.r*(vel_r-vel_l)/self.L
-        x,y,angle = curr_state
         x = self.x + delta_x
         y = self.y + delta_y
         angle = self.angle +delta_angle
@@ -61,19 +61,25 @@ pygame.display.set_caption("Title")
 
 car = CAR(600,600,(300,300))
 run = True
+vel_list = [(1,1),(1,0),(0,1),(-1,-1),(-1,0),(0,-1)]
+i = 0
+win.fill(WHITE)
 while run:
+    if i >= len(vel_list):
+        i = 0
+    print(i)
     events = pygame.event.get()
     for ev in events:
         if ev.type == pygame.QUIT:
             run = False
             pygame.quit()
 
-    
-    win.fill(WHITE)
-    car.next_state(2*pi,-2*pi)
+    x,y,angle = car.next_state(pi,pi)
+    car.change_state(x,y,angle)
     car.draw(win)
     
-    pygame.time.delay(1000)
+    pygame.time.delay(200)
     pygame.display.update()
+    i+=1
 
 
