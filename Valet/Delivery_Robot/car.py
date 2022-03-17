@@ -27,6 +27,7 @@ class CAR:
     def change_state(self,x,y,angle):
         self.x = x
         self.y = y
+        self.pos = (x,y)
         self.angle = angle
 
 
@@ -74,7 +75,7 @@ while run:
             run = False
             pygame.quit()
 
-    x,y,angle = car.next_state(pi,pi)
+    x,y,angle = car.next_state(pi*vel_list[i][0],pi*vel_list[i][1])
     car.change_state(x,y,angle)
     car.draw(win)
     
