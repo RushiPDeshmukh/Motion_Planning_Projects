@@ -1,3 +1,4 @@
+from turtle import width
 import pygame
 import numpy as np
 from math import *
@@ -8,7 +9,7 @@ BLUE = (0,0,255)
 
 
 class CAR:
-    def __init__(self,max_x = 600,max_y = 400,pos =(0,0),angle = 0,r = 1/(pi*2),L = 20,height = 20,width = 20) -> None:
+    def __init__(self,max_x = 600,max_y = 600,pos =(0,0),angle = 0,r = 30,L = 20,height = 20,width = 30) -> None:
         self.pos = pos
         self.angle = angle
         self.x = pos[0]
@@ -20,9 +21,8 @@ class CAR:
         self.L = L
         self.max_x = max_y
         self.max_y = max_y
-        self.surf = pygame.Surface((self.height,self.width))
-        self.surf.set_colorkey(WHITE)
-        self.surf.fill(RED)
+        self.surf = pygame.image.load('Delivery_Bot.png')
+        self.surf = pygame.transform.scale(self.surf,(width,height))
 
     def change_state(self,x,y,angle):
         self.x = x
@@ -30,57 +30,65 @@ class CAR:
         self.pos = (x,y)
         self.angle = angle
 
+    def get_state(self):
+        return (self.x,self.y,self.angle)
+
 
     def next_state(self,vel_l,vel_r):
-        delta_x = self.r*(vel_r + vel_l)*cos(self.angle)/2
-        delta_y = self.r*(vel_r + vel_l)*sin(self.angle)/2
-        delta_angle = self.r*(vel_r-vel_l)/self.L
+        delta_x = self.r*(vel_r + vel_l)*cos(radians(-self.angle))/2
+        delta_y = self.r*(vel_r + vel_l)*sin(radians(-self.angle))/2
+        delta_angle = self.r*10*(vel_r-vel_l)/self.L
         x = self.x + delta_x
         y = self.y + delta_y
-        angle = self.angle +delta_angle
+        angle =(self.angle +delta_angle)%360
         return (x,y,angle)
+
     
     def draw(self,win):
     
-        surf = pygame.transform.rotate(self.surf,angle = np.rad2deg(self.angle))
+        surf = pygame.transform.rotate(self.surf,angle = self.angle)
         rect1 = surf.get_rect()
         rect1.center = self.pos
 
         
         win.blit(surf,rect1)
-        pygame.draw.rect(win,(0,255,0),rect1,width = 1)
-        pygame.draw.circle(win,(0,255,0),self.pos,2)
+        # pygame.draw.rect(win,(0,255,0),rect1,width = 1)
+        # pygame.draw.circle(win,(0,255,0),self.pos,2)
 
         return 
 
 
+if __name__ == '__main__':
+    pygame.init()
+    width_win = 600
+    win = pygame.display.set_mode((width_win,width_win))
+    pygame.display.set_caption("Title")
 
-pygame.init()
-width_win = 600
-win = pygame.display.set_mode((width_win,width_win))
-pygame.display.set_caption("Title")
-
-car = CAR(600,600,(300,300))
-run = True
-vel_list = [(1,1),(1,0),(0,1),(-1,-1),(-1,0),(0,-1)]
-i = 0
-win.fill(WHITE)
-while run:
-    if i >= len(vel_list):
-        i = 0
-    print(i)
-    events = pygame.event.get()
-    for ev in events:
-        if ev.type == pygame.QUIT:
-            run = False
-            pygame.quit()
-
-    x,y,angle = car.next_state(pi*vel_list[i][0],pi*vel_list[i][1])
-    car.change_state(x,y,angle)
-    car.draw(win)
-    
-    pygame.time.delay(200)
-    pygame.display.update()
-    i+=1
+    car = CAR(pos=(300,300))
+    run = True
+    while run:
+        win.fill(WHITE)
+        events = pygame.event.get()
+        for ev in events:
+            if ev.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+            x,y,angle = car.get_state()
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_w:
+                    x,y,angle = car.next_state(1,1)
+                    
+                if ev.key == pygame.K_s:
+                    x,y,angle = car.next_state(-1,-1)
+                    
+                if ev.key == pygame.K_a:
+                    x,y,angle = car.next_state(-1,1)
+                    
+                if ev.key == pygame.K_d:
+                    x,y,angle = car.next_state(1,-1)
+                print(angle)
+            car.change_state(x,y,angle)
+        car.draw(win)
+        pygame.display.update()
 
 
