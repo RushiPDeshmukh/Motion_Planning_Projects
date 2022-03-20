@@ -9,53 +9,80 @@ BLACK = (0,0,0)
 
 
 class CAR:
-    def __init__(self,max_x = 600,max_y = 600,pos =(0,0),angle = 0,steering_angle = 0,height = 20,width = 30) -> None:
+    def __init__(self,max_x = 600,max_y = 600,pos =(0,0),angle_car = 0,angle_trailer1=0,angle_trailer2=0,steering_angle = 0,height = 20,width = 30,d=40) -> None:
         self.pos = pos
-        self.angle = angle
+        self.angle = angle_car
+        self.angle_trailer1 = angle_trailer1
+        self.angle_trailer2 = angle_trailer2
         self.x = pos[0]
         self.y = pos[1]
+        self.x1 = self.x - d*cos(radians(-self.angle_trailer1))
+        self.x2 = self.x1 - d*cos(radians(-self.angle_trailer2))
+        self.y1 = self.y - d*sin(radians(-self.angle_trailer1))
+        self.y2 = self.y1 - d*sin(radians(-self.angle_trailer2))
         self.height = height
         self.width = width 
         self.L = 20
-    
-        self.steering_angle = steering_angle
+        self.d = d
         self.max_x = max_y
         self.max_y = max_y
         self.surf = pygame.image.load('car.png')
         self.surf = pygame.transform.scale(self.surf,(width,height))
         self.surf.set_colorkey(WHITE)
+        
 
-    def change_state(self,x,y,angle):
+    def change_state(self,x,y,angle,angle_trailer1,angle_trailer2):
         self.x = x
         self.y = y
         self.pos = (x,y)
         self.angle = angle
+        self.angle_trailer1 = angle_trailer1
+        self.angle_trailer2 = angle_trailer2
+        d = self.d
+        self.x1 = self.x - d*cos(radians(-self.angle_trailer1))
+        self.x2 = self.x1 - d*cos(radians(-self.angle_trailer2))
+        self.y1 = self.y - d*sin(radians(-self.angle_trailer1))
+        self.y2 = self.y1 - d*sin(radians(-self.angle_trailer2))
 
     def get_state(self):
-        return (self.x,self.y,self.angle)
+        return (self.x,self.y,self.angle,self.angle_trailer1,self.angle_trailer2)
 
 
     def next_state(self,vel,steer):
         delta_x = vel*cos(radians(-self.angle))
         delta_y = vel*sin(radians(-self.angle))
         delta_angle = degrees(vel*tan(radians(steer))/self.L)
-        self.steering_angle = steer
+        delta_angle1 = degrees(vel*sin(-1*radians(self.angle - self.angle_trailer1))/self.d)
+        delta_angle2 = degrees(vel*sin(-1*radians(self.angle_trailer1 - self.angle_trailer2))*cos(-1*radians(self.angle - self.angle_trailer1))/self.d)
         x = self.x + delta_x
         y = self.y + delta_y
         angle =(self.angle+delta_angle)%360
-        return (x,y,angle)
+        angle1 =(self.angle_trailer1 + delta_angle1)%360
+        angle2 =(self.angle_trailer2 + delta_angle2)%360
+        return (x,y,angle,angle1,angle2)
         
 
     
     def draw(self,win):
     
-        surf = pygame.transform.rotate(self.surf,angle = self.angle)
+        surf_car = pygame.transform.rotate(self.surf,angle = self.angle)
 
-        rect1 = surf.get_rect()
+        rect1 = surf_car.get_rect()
         rect1.center = self.pos
+        win.blit(surf_car,rect1)
 
-        
-        win.blit(surf,rect1)
+        surf_trailer1 = pygame.transform.rotate(self.surf,angle = self.angle_trailer1)
+
+        rect1 = surf_trailer1.get_rect()
+        rect1.center = (self.x1,self.y1)
+        win.blit(surf_trailer1,rect1)
+        surf_trailer2 = pygame.transform.rotate(self.surf,angle = self.angle_trailer2)
+
+        rect1 = surf_trailer2.get_rect()
+        rect1.center = (self.x2,self.y2)
+        win.blit(surf_trailer2,rect1)
+        pygame.draw.line(win,BLACK,(self.x1,self.y1),self.pos)
+        pygame.draw.line(win,BLACK,(self.x1,self.y1),(self.x2,self.y2))
         # pygame.draw.rect(win,(0,255,0),rect1,width = 1)
         # pygame.draw.circle(win,(0,255,0),self.pos,2)
 
@@ -77,21 +104,21 @@ if __name__ == '__main__':
             if ev.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-            x,y,angle = car.get_state()
+            x,y,angle,angle1,angle2 = car.get_state()
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_w:
-                    x,y,angle = car.next_state(10,0)
+                    x,y,angle,angle1,angle2 = car.next_state(4,0)
                     
                 if ev.key == pygame.K_s:
-                    x,y,angle = car.next_state(-10,0)
+                    x,y,angle,angle1,angle2 = car.next_state(-4,0)
                     
                 if ev.key == pygame.K_a:
-                    x,y,angle = car.next_state(5,30)
+                    x,y,angle,angle1,angle2 = car.next_state(2,30)
                     
                 if ev.key == pygame.K_d:
-                    x,y,angle = car.next_state(5,-30)
+                    x,y,angle,angle1,angle2 = car.next_state(2,-30)
                 print(angle)
-            car.change_state(x,y,angle)
+            car.change_state(x,y,angle,angle1,angle2)
         car.draw(win)
         pygame.display.update()
 
