@@ -52,7 +52,7 @@ class CAR:
         surf = pygame.transform.rotate(self.surf,angle = self.angle)
 
         rect1 = surf.get_rect()
-        rect1.center = self.pos
+        rect1.center = (self.x+7*cos(radians(-self.angle)),self.y+7*sin(radians(-self.angle)))
 
         
         win.blit(surf,rect1)
