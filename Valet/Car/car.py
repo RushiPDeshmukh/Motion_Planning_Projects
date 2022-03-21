@@ -16,7 +16,7 @@ class CAR:
         self.y = pos[1]
         self.height = height
         self.width = width 
-        self.L = 20
+        self.L = 28
     
         self.steering_angle = steering_angle
         self.max_x = max_y
@@ -45,7 +45,14 @@ class CAR:
         y = self.y + delta_y
         angle =(self.angle+delta_angle)%360
         return (x,y,angle)
-        
+    
+    def ref_rect(self,state):
+        x,y,angle = state
+        surf = pygame.transform.rotate(self.surf,angle = angle)
+        rect1 = surf.get_rect()
+        rect1.center = (self.x+7*cos(radians(-self.angle)),self.y+7*sin(radians(-self.angle)))
+
+        return rect1
 
     
     def draw(self,win):
@@ -92,7 +99,7 @@ if __name__ == '__main__':
                 if ev.key == pygame.K_d:
                     x,y,angle = car.next_state(5,-30)
                 print(angle)
-            car.change_state(x,y,angle)
+            car.change_state((x,y,angle))
         car.draw(win)
         pygame.display.update()
 
