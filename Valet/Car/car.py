@@ -25,7 +25,8 @@ class CAR:
         self.surf = pygame.transform.scale(self.surf,(width,height))
         self.surf.set_colorkey(WHITE)
 
-    def change_state(self,x,y,angle):
+    def change_state(self,state):
+        x,y,angle = state
         self.x = x
         self.y = y
         self.pos = (x,y)

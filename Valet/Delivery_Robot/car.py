@@ -44,7 +44,8 @@ class CAR:
         angle =(self.angle +delta_angle)%360
         return (x,y,angle)
 
-    def ref_rect(self,x,y,angle):
+    def ref_rect(self,state):
+        x,y,angle = state
         surf = pygame.transform.rotate(self.surf,angle = angle)
         rect1 = surf.get_rect()
         rect1.center = (x + 10*cos(radians(-angle)),y+ 10*sin(radians(-angle)))

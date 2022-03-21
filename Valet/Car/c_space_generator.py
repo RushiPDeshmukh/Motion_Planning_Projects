@@ -1,6 +1,4 @@
-from audioop import reverse
 import pygame
-from sympy import root
 from car import *
 import numpy as np
 from collections import deque
@@ -27,10 +25,10 @@ class node:
         cost = 0
         car.change_state(self.state)
         child = []
-        child.append((node(car.next_state(1,1),parent=self),cost+1))
-        child.append((node(car.next_state(-1,-1),parent=self),cost+4))
-        child.append((node(car.next_state(1,-1),parent=self),cost+2))
-        child.append((node(car.next_state(-1,1),parent=self),cost+2))
+        child.append((node(car.next_state(10,0),parent=self),cost+1))
+        child.append((node(car.next_state(-10,0),parent=self),cost+4))
+        child.append((node(car.next_state(5,30),parent=self),cost+2))
+        child.append((node(car.next_state(5,-30),parent=self),cost+2))
         return child
     
 
@@ -38,7 +36,7 @@ def heuristic_cost(state,goal):
     s_x,s_y,s_angle = state
     g_x,g_y,g_angle = goal
     cost = ((s_x-g_x)**2 + (s_y-g_y)**2)**0.5
-    if cost < 10:
+    if cost < 1:
         cost = ((s_x-g_x)**2 + (s_y-g_y)**2 + ((s_angle-g_angle)/1)**2)**0.5
     return cost
 
@@ -46,7 +44,7 @@ def draw_path(path):
     [pygame.draw.circle(win,RED,center=(x,y),radius=2,width=2) for x,y,_ in path]
     return
 
-car = CAR(pos=(300,200))
+car = CAR(pos=(300,200),angle=180)
 run = True
 pygame.init()
 width_win = 600
@@ -56,7 +54,7 @@ pygame.display.set_caption("Title")
 
 win.fill(WHITE)
 pygame.draw.circle(win,RED,center=(30,50),radius=2,width=2)
-goal_state = (30,50,0)
+goal_state = (30,50,180)
 queue = deque()
 root_node = node(car.get_state())
 queue.append((root_node,0))
@@ -66,8 +64,8 @@ visited.append((x,y,angle))
 while len(queue)>0:
     queue = sorted(queue,key = lambda x:x[1])
     curr_node,cost = queue.pop(0)
-    print(heuristic_cost(curr_node.state,goal_state))
-    if curr_node == goal_state or heuristic_cost(curr_node.state,goal_state)<3 and curr_node.state[2]==goal_state[2]:
+    print(curr_node.state[2])
+    if curr_node == goal_state or heuristic_cost(curr_node.state,goal_state)<10 and curr_node.state[2]==goal_state[2]:
         print("Done!!")
         print(curr_node.state)
         goal_state = curr_node
@@ -84,7 +82,7 @@ while len(queue)>0:
     
             pygame.time.delay(5)
             pygame.display.update()
-            cost = cost + heuristic_cost(child_node.state,(30,50,0))
+            cost = cost + heuristic_cost(child_node.state,(30,50,180))
             queue.append((child_node,cost))
             
 node = goal_state
