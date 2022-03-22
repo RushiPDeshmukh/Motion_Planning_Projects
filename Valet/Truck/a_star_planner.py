@@ -53,9 +53,9 @@ def find_path(root_node,goal_state):
         pygame.draw.rect(win,BLUE,car1)
         obs = [obstacle1,car1]
 
-        
+        rect1,rect2 = car.get_ref_rects(curr_node.state)
         print(heuristic_cost(curr_node.state,goal_state))
-        if check_goal(curr_node.state,goal_rect):
+        if pygame.Rect.contains(goal_rect,rect1) and pygame.Rect.contains(goal_rect,rect2) and abs(curr_node.angle-goal_state[2]) <10:
             print("Done!!")
             print(curr_node.state)
             goal_state = curr_node
@@ -64,7 +64,7 @@ def find_path(root_node,goal_state):
         for child_node,cost in child_nodes:
             x,y,angle,angle1,x1,y1 = child_node.state
             rect1,rect2 = car.get_ref_rects(child_node.state)
-            if (x,y,angle) not in visited and not collision(rect1,obs) and not collision(rect2,obs):
+            if (x,y,angle,angle1,x1,y1) not in visited and not collision(rect1,obs) and not collision(rect2,obs):
                 curr_node.add_child(child_node,cost)
                 visited.append(child_node.state)
                 print(heuristic_cost(curr_node.state,goal_state))
@@ -81,7 +81,6 @@ def find_path(root_node,goal_state):
     path = []
     while node.parent!=None:
         win.fill(WHITE)
-        x,y,_ = node.state
         path.append(node.state)
         node = node.parent
     return path

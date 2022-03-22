@@ -27,8 +27,8 @@ class node:
         car.change_state(self.state)
         child = []
         cost = heuristic_cost(self.state,root)/1.5
-        child.append((node(car.next_state(10,0),parent=self),cost+1))
-        child.append((node(car.next_state(-10,0),parent=self),cost+20))
+        child.append((node(car.next_state(10,0),parent=self),cost+10))
+        child.append((node(car.next_state(-10,0),parent=self),cost+40))
         child.append((node(car.next_state(10,30),parent=self),cost+30))
         child.append((node(car.next_state(10,-30),parent=self),cost+30))
         return child
