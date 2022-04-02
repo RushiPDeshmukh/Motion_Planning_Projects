@@ -18,10 +18,11 @@ def random_patch():
     if len(patch.shape) == 1:
         #Change the orientation of patch
         patch = patch.T if random_orientation%2 == 0 else patch
+        shape_patch = (patch.shape[0],0)
     else:
         #Change the orientation of patch
         patch = np.rot90(patch,random_orientation,(0,1))
-
-    shape_patch = patch.shape
+        shape_patch = patch.shape
+    
 
     return patch,shape_patch
