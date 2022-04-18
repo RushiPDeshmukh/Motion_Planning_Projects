@@ -17,7 +17,7 @@ import numpy as np
 import pygame
 from math import *
 
-from torch import rand
+
 from utils import *
 import os
 import time
@@ -49,6 +49,11 @@ class Bush:
         self.surface = pygame.image.load(os.path.abspath('src/utils/fire.png'))
         self.surface = pygame.transform.scale(self.surface,(self.tree_width,self.tree_width))
 
+    def extinguish_fire(self,t):
+        self.type = "bush"
+        self.fire_start_time = t
+        self.surface = pygame.image.load(os.path.abspath('src/utils/bush.png'))
+        self.surface = pygame.transform.scale(self.surface,(self.tree_width,self.tree_width))
     def on_fire(self):
         return self.type == 'fire'
     
@@ -186,6 +191,15 @@ class Forest:
                 print("fire!")
                 self.bushes[random_index].set_fire(t)
                 done = True
+                goal = (self.bushes[random_index].pos[0]//50,self.bushes[random_index].pos[1]//50,0)
+        return goal,self.bushes[random_index]
+    def get_on_fire(self):
+        fire_list = []
+        for bush in self.bushes:
+            if bush.on_fire:
+                fire_list.append((bush,bush.fire_start_time))
+        return fire_list
+
     
     def spread_fire(self,t):
         for bush in self.bushes:
@@ -199,6 +213,7 @@ class Forest:
 
 if __name__ == "__main__":
     width_win = 500
+    
     win = pygame.display.set_mode((width_win,width_win))
     pygame.display.set_caption("Title")
     pygame.font.init()
