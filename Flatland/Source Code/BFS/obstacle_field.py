@@ -182,7 +182,10 @@ def main():
 
     Empty_Grid = init_grid()
     Grid = obstacle_field_generator(Empty_Grid,win, animate= True)
+    while True:
+        draw_grid(win,grid=Grid)
     pygame.quit()
     return None
 
 
+# main()

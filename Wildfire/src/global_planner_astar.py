@@ -3,7 +3,6 @@ This code contains two global planners based on discreet motion planning and sam
 These will give a global path plan to the local planner. 
 """
 
-from sympy import rad
 from environment import *
 from utils import *
 from firetruck import *

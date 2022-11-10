@@ -1,11 +1,16 @@
 import pygame
 import numpy as np
 from math import *
+import os
+
+path = os.getcwd()
+
 
 RED = (255,100,0)
 WHITE = (255,255,255)
 BLUE = (0,0,255)
 BLACK = (0,0,0)
+
 
 
 class CAR:
@@ -21,7 +26,7 @@ class CAR:
         self.steering_angle = steering_angle
         self.max_x = max_y
         self.max_y = max_y
-        self.surf = pygame.image.load('car.png')
+        self.surf = pygame.image.load(path+'/Car/car.png')
         self.surf = pygame.transform.scale(self.surf,(width,height))
         self.surf.set_colorkey(WHITE)
 
